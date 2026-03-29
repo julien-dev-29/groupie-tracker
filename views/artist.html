@@ -1,0 +1,125 @@
+{{define "content"}}
+
+<div class="container mt-4">
+    <a href="/" class="btn btn-outline-light mb-3">&larr; Retour</a>
+    <div class="card">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{.Artist.Image}}" class="img-fluid rounded-start" alt="{{.Artist.Name}}">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h1 class="card-title">{{.Artist.Name}}</h1>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h4>Informations</h4>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><strong>Date de création:</strong> {{.Artist.CreationDate}}</li>
+                                <li class="mb-2"><strong>Premier album:</strong> {{.Artist.FirstAlbum}}</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Membres</h4>
+                            <ul class="list-unstyled">
+                                {{range .Artist.Members}}
+                                <li class="mb-1"><span class="badge bg-secondary">{{.}}</span></li>
+                                {{end}}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-body">
+            <h3>Dates et Lieux</h3>
+            <div id="map"></div>
+            <div class="accordion mt-4" id="accordionDates">
+                {{range $location, $dates := .Dates.DatesLocations}}
+                <div class="accordion-item bg-dark">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button bg-dark text-light" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapse{{$location | replaceReservationChars}}">
+                            {{$location}}
+                        </button>
+                    </h2>
+                    <div id="collapse{{$location | replaceReservationChars}}" class="accordion-collapse collapse show"
+                        data-bs-parent="#accordionDates">
+                        <div class="accordion-body">
+                            <ul class="list-unstyled">
+                                {{range $dates}}
+                                <li class="mb-2">{{.}}</li>
+                                {{end}}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize the map
+        const map = L.map('map').setView([20, 0], 2);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+        // Extract locations from the page
+        const locations = [];
+        document.querySelectorAll('.accordion-header .accordion-button').forEach(button => {
+            const location = button.textContent.trim();
+            if (location) {
+                locations.push(location);
+            }
+        });
+
+        // Geocode locations and add markers
+        const markers = [];
+        locations.forEach(location => {
+            geocodeLocation(location).then(coords => {
+                if (coords) {
+                    const marker = L.marker([coords.lat, coords.lon])
+                        .bindPopup(`<strong>${location}</strong>`)
+                        .addTo(map);
+                    markers.push(marker);
+
+                    // Fit map to all markers
+                    if (markers.length === locations.length) {
+                        const group = new L.featureGroup(markers);
+                        map.fitBounds(group.getBounds().pad(0.1));
+                    }
+                }
+            });
+        });
+
+        // Geocode location using OpenStreetMap Nominatim API
+        async function geocodeLocation(location) {
+            try {
+                const response = await fetch(
+                    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}&limit=1`,
+                    { headers: { 'Accept': 'application/json' } }
+                );
+                const data = await response.json();
+                if (data && data.length > 0) {
+                    return {
+                        lat: parseFloat(data[0].lat),
+                        lon: parseFloat(data[0].lon)
+                    };
+                }
+            } catch (error) {
+                console.error('Geocoding error for', location, error);
+            }
+            return null;
+        }
+    });
+</script>
+
+{{end}}

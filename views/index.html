@@ -1,0 +1,138 @@
+{{define "content"}}
+<div class="container mb-4">
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Choose Display
+        </button>
+        <ul class="dropdown-menu">
+            <li><a href="/?display=card" class="dropdown-item" type="button">Card</a></li>
+            <li><a href="/?display=block" class="dropdown-item" type="button">Block</a></li>
+            <li><a href="/?display=table" class="dropdown-item" type="button">Table</a></li>
+        </ul>
+    </div>
+</div>
+
+{{if eq .DisplayMode "block"}}
+<div class="container">
+    {{range .Artists}}
+    <div class="card mb-4">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{.Image}}" class="img-fluid rounded-start" alt="{{.Name}}">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{.Name}}</h5>
+                    <p class="card-text">
+                        <strong>Date de création:</strong> {{.CreationDate}}<br>
+                        <strong>Premier album:</strong> {{.FirstAlbum}}
+                    </p>
+                    <a href="/artist/{{.Id}}" class="btn btn-primary">Voir l'artiste</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{end}}
+</div>
+{{else if eq .DisplayMode "card"}}
+<div class="m-auto container row gap-3 mt-5">
+    {{range .Artists}}
+    <div class="card col-4" style="width: 18rem;">
+        <img src="{{.Image}}" class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">
+                {{.Name}}
+            </h5>
+            <p class="card-text">
+                Date de création: {{.CreationDate}}
+            </p>
+            <a href="/artist/{{.Id}}" class="btn btn-primary">Go somewhere</a>
+        </div>
+    </div>
+    {{end}}
+</div>
+{{else}}
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nom</th>
+                <th scope="col">Date de création</th>
+                <th scope="col">Premier Album</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Artists}}
+            <tr>
+                <th scope="row">
+                    {{.Id}}
+                </th>
+                <td>
+                    {{.Name}}
+                </td>
+                <td>
+                    {{.CreationDate}}
+                </td>
+                <td>
+                    {{.FirstAlbum}}
+                </td>
+                <td>
+                    <a href="/artist/{{.Id}}" class="btn btn-primary">Voir l'artiste</a>
+                </td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+</div>
+{{end}}
+
+<!-- Pagination -->
+{{if gt .TotalPages 1}}
+<div class="container mt-5 mb-5">
+    <nav aria-label="Page navigation" class="d-flex justify-content-center">
+        <ul class="pagination">
+            <!-- Previous button -->
+            {{if .HasPrevious}}
+            <li class="page-item">
+                <a class="page-link" href="/?page={{.PreviousPage}}&display={{.DisplayMode}}">Précédent</a>
+            </li>
+            {{else}}
+            <li class="page-item disabled">
+                <span class="page-link">Précédent</span>
+            </li>
+            {{end}}
+
+            <!-- Page numbers -->
+            {{range $i := until .TotalPages}}
+            {{$pageNum := add $i 1}}
+            {{if eq $pageNum $.CurrentPage}}
+            <li class="page-item active" aria-current="page">
+                <span class="page-link">{{$pageNum}}</span>
+            </li>
+            {{else}}
+            <li class="page-item">
+                <a class="page-link" href="/?page={{$pageNum}}&display={{$.DisplayMode}}">{{$pageNum}}</a>
+            </li>
+            {{end}}
+            {{end}}
+
+            <!-- Next button -->
+            {{if .HasNext}}
+            <li class="page-item">
+                <a class="page-link" href="/?page={{.NextPage}}&display={{.DisplayMode}}">Suivant</a>
+            </li>
+            {{else}}
+            <li class="page-item disabled">
+                <span class="page-link">Suivant</span>
+            </li>
+            {{end}}
+        </ul>
+    </nav>
+    <div class="text-center text-muted">
+        Page {{.CurrentPage}} sur {{.TotalPages}}
+    </div>
+</div>
+{{end}}
+{{end}}
