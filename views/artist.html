@@ -1,7 +1,7 @@
 {{define "content"}}
 
-<div class="container mt-4">
-    <a href="/" class="btn btn-outline-light mb-3">&larr; Retour</a>
+<div class="container">
+    <a href="/" class="btn btn-link mb-3">&larr; Retour</a>
     <div class="card">
         <div class="row g-0">
             <div class="col-md-4">
@@ -38,9 +38,9 @@
             <div id="map"></div>
             <div class="accordion mt-4" id="accordionDates">
                 {{range $location, $dates := .Dates.DatesLocations}}
-                <div class="accordion-item bg-dark">
+                <div class="accordion-item">
                     <h2 class="accordion-header">
-                        <button class="accordion-button bg-dark text-light" type="button" data-bs-toggle="collapse"
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
                             data-bs-target="#collapse{{$location | replaceReservationChars}}">
                             {{$location}}
                         </button>
