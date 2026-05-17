@@ -14,7 +14,7 @@ FROM alpine:3.19
 WORKDIR /app
 
 COPY --from=builder /groupie-tracker .
-COPY templates ./templates
+COPY views ./views
 
 LABEL maintainer="Juroll"
 LABEL version="1.0"

@@ -1,7 +1,5 @@
 package api
 
-
-
 type ArtistData struct {
 	Title  string
 	Artist Artist

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" data-bs-theme="">
+<html lang="fr" data-bs-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -9,9 +9,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
     <style>
         #map {
-            height: 500px;
+            height: 50vh;
+            min-height: 300px;
             border-radius: 8px;
-            margin-top: 15px;
+        }
+        @media (max-width: 768px) {
+            #map {
+                height: 40vh;
+                min-height: 250px;
+            }
         }
     </style>
     <title>

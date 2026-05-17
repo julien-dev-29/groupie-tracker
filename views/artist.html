@@ -1,25 +1,25 @@
 {{define "content"}}
 
-<div class="container">
-    <a href="/" class="btn btn-link mb-3">&larr; Retour</a>
+<div class="container py-3">
+    <a href="/" class="btn btn-outline-secondary mb-3">&larr; Back</a>
     <div class="card">
         <div class="row g-0">
             <div class="col-md-4">
-                <img src="{{.Artist.Image}}" class="img-fluid rounded-start" alt="{{.Artist.Name}}">
+                <img src="{{.Artist.Image}}" class="img-fluid rounded-start" alt="{{.Artist.Name}}" style="object-fit: cover; height: 100%; min-height: 250px;">
             </div>
             <div class="col-md-8">
                 <div class="card-body">
                     <h1 class="card-title">{{.Artist.Name}}</h1>
                     <div class="row mt-4">
                         <div class="col-md-6">
-                            <h4>Informations</h4>
+                            <h4>Information</h4>
                             <ul class="list-unstyled">
-                                <li class="mb-2"><strong>Date de création:</strong> {{.Artist.CreationDate}}</li>
-                                <li class="mb-2"><strong>Premier album:</strong> {{.Artist.FirstAlbum}}</li>
+                                <li class="mb-2"><strong>Creation Date:</strong> {{.Artist.CreationDate}}</li>
+                                <li class="mb-2"><strong>First Album:</strong> {{.Artist.FirstAlbum}}</li>
                             </ul>
                         </div>
                         <div class="col-md-6">
-                            <h4>Membres</h4>
+                            <h4>Members</h4>
                             <ul class="list-unstyled">
                                 {{range .Artist.Members}}
                                 <li class="mb-1"><span class="badge bg-secondary">{{.}}</span></li>
@@ -34,8 +34,8 @@
 
     <div class="card mt-4">
         <div class="card-body">
-            <h3>Dates et Lieux</h3>
-            <div id="map"></div>
+            <h3>Dates & Locations</h3>
+            <div id="map" class="mb-3" style="min-height: 300px;"></div>
             <div class="accordion mt-4" id="accordionDates">
                 {{range $location, $dates := .Dates.DatesLocations}}
                 <div class="accordion-item">
@@ -63,16 +63,13 @@
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Initialize the map
         const map = L.map('map').setView([20, 0], 2);
 
-        // Add OpenStreetMap tiles
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors',
             maxZoom: 19
         }).addTo(map);
 
-        // Extract locations from the page
         const locations = [];
         document.querySelectorAll('.accordion-header .accordion-button').forEach(button => {
             const location = button.textContent.trim();
@@ -81,7 +78,6 @@
             }
         });
 
-        // Geocode locations and add markers
         const markers = [];
         locations.forEach(location => {
             geocodeLocation(location).then(coords => {
@@ -91,7 +87,6 @@
                         .addTo(map);
                     markers.push(marker);
 
-                    // Fit map to all markers
                     if (markers.length === locations.length) {
                         const group = new L.featureGroup(markers);
                         map.fitBounds(group.getBounds().pad(0.1));
@@ -100,7 +95,6 @@
             });
         });
 
-        // Geocode location using OpenStreetMap Nominatim API
         async function geocodeLocation(location) {
             try {
                 const response = await fetch(
