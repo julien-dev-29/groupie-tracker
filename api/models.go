@@ -19,3 +19,10 @@ type ArtistDates struct {
 	Id             int                 `json:"id"`
 	DatesLocations map[string][]string `json:"datesLocations"`
 }
+
+type EnrichedArtist struct {
+	Artist
+	Locations   []string
+	MemberCount int
+	AlbumYear   int
+}

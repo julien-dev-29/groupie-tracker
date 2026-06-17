@@ -15,6 +15,7 @@ WORKDIR /app
 
 COPY --from=builder /groupie-tracker .
 COPY views ./views
+COPY static ./static
 
 LABEL maintainer="Juroll"
 LABEL version="1.0"

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"main/handlers"
 	"net/http"
 
@@ -14,9 +15,11 @@ func main() {
 	mux.HandleFunc("/", handlers.HandleHome)
 	mux.HandleFunc("/artist/{id}", handlers.HandleArtistPage)
 
+	mux.NotFoundHandler = http.HandlerFunc(handlers.HandleNotFound)
+
 	fs := http.FileServer(http.Dir("static"))
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	fmt.Println("http://localhost:8000")
-	http.ListenAndServe(":8000", mux)
+	log.Fatal(http.ListenAndServe(":8000", mux))
 }

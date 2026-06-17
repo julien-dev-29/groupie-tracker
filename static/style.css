@@ -1,0 +1,35 @@
+.offcanvas {
+    --bs-offcanvas-width: 320px;
+}
+
+.location-tree .location-children {
+    margin-left: 1.25rem;
+    border-left: 1px solid var(--bs-border-color);
+    padding-left: 0.5rem;
+}
+
+.location-tree .location-group {
+    margin-bottom: 0.25rem;
+}
+
+.location-tree .form-check {
+    margin-bottom: 0.125rem;
+}
+
+.location-tree .form-check-label {
+    font-size: 0.9rem;
+}
+
+.offcanvas-body {
+    overflow-y: auto;
+}
+
+@media (max-width: 576px) {
+    .offcanvas {
+        --bs-offcanvas-width: 100%;
+    }
+}
+
+main {
+    min-height: calc(100vh - 140px);
+}
