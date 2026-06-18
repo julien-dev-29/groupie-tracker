@@ -9,11 +9,8 @@ import (
 func TestFilterQuery_Empty(t *testing.T) {
 	p := PageData{DisplayMode: "card"}
 	fq := p.FilterQuery()
-	if fq == "" {
-		t.Error("expected FilterQuery to return display mode param")
-	}
-	if !strings.Contains(fq, "display=card") {
-		t.Errorf("expected FilterQuery to contain display=card, got %s", fq)
+	if fq != "" {
+		t.Errorf("expected empty FilterQuery for no active filters, got %s", fq)
 	}
 }
 

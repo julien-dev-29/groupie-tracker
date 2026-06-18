@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"slices"
 	"fmt"
 	"html/template"
 	"main/api"
@@ -33,12 +34,7 @@ func homeTemplate() *template.Template {
 				return strings.ReplaceAll(s, " ", "")
 			},
 			"stringInSlice": func(s string, slice []string) bool {
-				for _, v := range slice {
-					if v == s {
-						return true
-					}
-				}
-				return false
+				return slices.Contains(slice, s)
 			},
 			"intInSlice": func(n int, slice []int) bool {
 				for _, v := range slice {
@@ -66,14 +62,14 @@ func homeTemplate() *template.Template {
 
 func HandleHome(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		http.Error(w, "Bad Request", http.StatusBadRequest)
+		renderError(w, http.StatusBadRequest, "400 - Bad Request", "Invalid request method.")
 		return
 	}
 
 	artists, err := api.GetEnrichedArtists()
 	if err != nil {
 		fmt.Println("Error fetching artists:", err)
-		http.Error(w, "Failed to load artists", http.StatusInternalServerError)
+		renderError(w, http.StatusInternalServerError, "500 - Server Error", "Failed to load artists. Please try again later.")
 		return
 	}
 
@@ -223,6 +219,6 @@ func HandleHome(w http.ResponseWriter, r *http.Request) {
 
 	if err := homeTemplate().ExecuteTemplate(w, "base.html", data); err != nil {
 		fmt.Println("Error executing template:", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		renderError(w, http.StatusInternalServerError, "500 - Server Error", "An unexpected error occurred.")
 	}
 }

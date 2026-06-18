@@ -39,17 +39,27 @@
                                     {{.DisplayMode | title}}
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a href="/?display=card{{.FilterQuery}}" class="dropdown-item">Card</a></li>
-                                    <li><a href="/?display=block{{.FilterQuery}}" class="dropdown-item">Block</a></li>
-                                    <li><a href="/?display=table{{.FilterQuery}}" class="dropdown-item">Table</a></li>
+                                    <li><a href="/?display=card&page={{.CurrentPage}}{{.FilterQuery}}" class="dropdown-item{{if eq .DisplayMode "card"}} active{{end}}">Card</a></li>
+                                    <li><a href="/?display=block&page={{.CurrentPage}}{{.FilterQuery}}" class="dropdown-item{{if eq .DisplayMode "block"}} active{{end}}">Block</a></li>
+                                    <li><a href="/?display=table&page={{.CurrentPage}}{{.FilterQuery}}" class="dropdown-item{{if eq .DisplayMode "table"}} active{{end}}">Table</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                     {{if .HasActiveFilter}}
-                    <div class="mt-2 d-flex justify-content-between align-items-center">
-                        <span class="text-muted small">{{.ResultSummary}}</span>
-                        <a href="/" class="btn btn-sm btn-outline-secondary">Clear Filters</a>
+                    <div class="mt-2">
+                        <div class="d-flex flex-wrap gap-1 align-items-center">
+                            {{if .Query}}<a href="#" class="badge bg-info me-1 text-decoration-none filter-remove" data-filter-param="q">Name: {{.Query}} &times;</a>{{end}}
+                            {{if .Member}}<a href="#" class="badge bg-info me-1 text-decoration-none filter-remove" data-filter-param="member">Member: {{.Member}} &times;</a>{{end}}
+                            {{if .MinYear}}<a href="#" class="badge bg-info me-1 text-decoration-none filter-remove" data-filter-param="minYear">Created after: {{.MinYear}} &times;</a>{{end}}
+                            {{if .MaxYear}}<a href="#" class="badge bg-info me-1 text-decoration-none filter-remove" data-filter-param="maxYear">Created before: {{.MaxYear}} &times;</a>{{end}}
+                            {{if .MinAlbumYear}}<a href="#" class="badge bg-info me-1 text-decoration-none filter-remove" data-filter-param="minAlbum">Album after: {{.MinAlbumYear}} &times;</a>{{end}}
+                            {{if .MaxAlbumYear}}<a href="#" class="badge bg-info me-1 text-decoration-none filter-remove" data-filter-param="maxAlbum">Album before: {{.MaxAlbumYear}} &times;</a>{{end}}
+                            {{range .SelectedMemberCounts}}<a href="#" class="badge bg-info me-1 text-decoration-none filter-remove" data-filter-param="members" data-filter-value="{{.}}">{{.}} members &times;</a>{{end}}
+                            {{range .SelectedLocations}}<a href="#" class="badge bg-info me-1 text-decoration-none filter-remove" data-filter-param="locations" data-filter-value="{{.}}">Location: {{.}} &times;</a>{{end}}
+                            <span class="text-muted small ms-2">{{.ResultSummary}}</span>
+                            <a href="/" class="btn btn-sm btn-outline-danger ms-auto">Clear Filters</a>
+                        </div>
                     </div>
                     {{end}}
                 </div>
@@ -182,7 +192,7 @@
                             <h5 class="card-title">{{.Name}}</h5>
                             <p class="card-text">
                                 <strong>Creation Date:</strong> {{.CreationDate}}<br>
-                                <strong>First Album:</strong> {{.FirstAlbum}}<br>
+                                <strong>Album:</strong> {{.AlbumYear}}<br>
                                 <strong>Members:</strong> {{.MemberCount}}
                             </p>
                             <a href="/artist/{{.Id}}" class="btn btn-primary">View Artist</a>
@@ -202,6 +212,7 @@
                         <h5 class="card-title">{{.Name}}</h5>
                         <p class="card-text text-muted small">
                             Created: {{.CreationDate}}<br>
+                            Album: {{.AlbumYear}}<br>
                             Members: {{.MemberCount}}
                         </p>
                         <a href="/artist/{{.Id}}" class="btn btn-primary">View Artist</a>
@@ -217,8 +228,8 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Name</th>
-                        <th scope="col">Creation Date</th>
-                        <th scope="col">First Album</th>
+                        <th scope="col">Created</th>
+                        <th scope="col">Album</th>
                         <th scope="col">Members</th>
                         <th scope="col"></th>
                     </tr>
@@ -229,7 +240,7 @@
                         <th scope="row">{{.Id}}</th>
                         <td>{{.Name}}</td>
                         <td>{{.CreationDate}}</td>
-                        <td>{{.FirstAlbum}}</td>
+                        <td>{{.AlbumYear}}</td>
                         <td>{{.MemberCount}}</td>
                         <td><a href="/artist/{{.Id}}" class="btn btn-primary btn-sm">View Artist</a></td>
                     </tr>

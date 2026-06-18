@@ -48,14 +48,14 @@ func HandleArtistPage(w http.ResponseWriter, r *http.Request) {
 	id := vars["id"]
 	artistId, err := strconv.Atoi(id)
 	if err != nil || artistId < 1 {
-		http.Error(w, "Invalid artist ID", http.StatusBadRequest)
+		renderError(w, http.StatusBadRequest, "400 - Bad Request", "Invalid artist ID.")
 		return
 	}
 
 	artist, dates, err := api.GetArtistById(artistId)
 	if err != nil {
 		fmt.Println("Error fetching artist:", err)
-		http.Error(w, "Artist not found", http.StatusNotFound)
+		renderError(w, http.StatusNotFound, "404 - Artist Not Found", "The requested artist could not be found.")
 		return
 	}
 
@@ -66,6 +66,6 @@ func HandleArtistPage(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := artistTemplate().ExecuteTemplate(w, "base.html", data); err != nil {
 		fmt.Println("Error executing template:", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		renderError(w, http.StatusInternalServerError, "500 - Server Error", "An unexpected error occurred.")
 	}
 }

@@ -24,19 +24,21 @@ func errorTemplate() *template.Template {
 	return errorTmpl
 }
 
-func HandleNotFound(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotFound)
-	data := struct {
-		Title   string
-		Message string
-		Code    int
-	}{
-		Title:   "404 - Page Not Found",
-		Message: "The page you are looking for does not exist.",
-		Code:    404,
-	}
+type ErrorData struct {
+	Title   string
+	Message string
+	Code    int
+}
+
+func renderError(w http.ResponseWriter, status int, title, message string) {
+	w.WriteHeader(status)
+	data := ErrorData{Title: title, Message: message, Code: status}
 	if err := errorTemplate().ExecuteTemplate(w, "base.html", data); err != nil {
-		fmt.Println("Error executing 404 template:", err)
-		http.Error(w, "Not Found", http.StatusNotFound)
+		fmt.Println("Error executing error template:", err)
+		http.Error(w, message, status)
 	}
+}
+
+func HandleNotFound(w http.ResponseWriter, r *http.Request) {
+	renderError(w, http.StatusNotFound, "404 - Page Not Found", "The page you are looking for does not exist.")
 }

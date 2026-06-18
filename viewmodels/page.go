@@ -57,7 +57,6 @@ func (p PageData) FilterQuery() string {
 	if len(p.SelectedLocations) > 0 {
 		vals["locations"] = p.SelectedLocations
 	}
-	vals.Set("display", p.DisplayMode)
 	if len(vals) > 0 {
 		return "&" + vals.Encode()
 	}
